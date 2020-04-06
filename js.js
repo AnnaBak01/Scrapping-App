@@ -16,7 +16,7 @@ function renderPage(subjects) {
                                    <span class="text-muted"><small>${element.name}</small></span>
                               </div>
                          <div class="col-2 mt-1">
-                    <div class="notice on" id="notice${element.id}"></div>
+                    <div class="notice" id="notice${element.id}"></div>
                </div>
           </div>
      </p>
@@ -39,27 +39,22 @@ function renderPage(subjects) {
     $(".notice").click(function () {
       const notice = this.id;
       if ($("#" + notice).hasClass("on")) {
-        $("#" + notice).addClass("off");
-        $("#" + notice).removeClass("on");
-
         $("strong").html("Ukończono pracę domową!");
         $(".toast-body").html(
           "Od teraz ten przedmiot nie będzie już przypominany do czasu następnego update'u!"
         );
         $(".toast").toast("show");
-
+        $("#" + notice).removeClass("on");
+        $("#" + notice).addClass("off");
         checkCookie(notice, "on");
       } else if ($("#" + notice).hasClass("off")) {
-        alert(this.id);
-        $("#" + notice).addClass("on");
-        $("#" + notice).removeClass("off");
-
         $("strong").html("Dodano znacznik pracy domowej!");
         $(".toast-body").html(
           "Znakcznik będzie tutaj dopóki nie odrobisz lekcji z tego przedmiotu."
         );
         $(".toast").toast("show");
-
+        $("#" + notice).removeClass("off");
+        $("#" + notice).addClass("on");
         checkCookie(notice, "off");
       }
     });
@@ -74,11 +69,11 @@ function renderPage(subjects) {
 
   render(itemsContainer, document.getElementsByTagName("app")[0]);
 }
-
 const xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function () {
   if (this.readyState == 4 && this.status == 200) {
     renderPage(JSON.parse(xhttp.responseText));
+    loadCookies();
   }
 };
 xhttp.open("GET", "http://localhost/CrapApp/php.php/all/", true);
@@ -97,9 +92,19 @@ function checkCookie(id, klasa) {
   } else {
     var subject = id;
     setCookie(subject, klasa, 30);
+    
   }
 }
 
-function checkTag() {
-  alert("ff");
+function loadCookies() {
+  for (let j = 1; j < 14; j++) {
+    const el = document.getElementById("notice" + j);
+    const a = Cookies.get("notice" + j);
+    if (Cookies.get("notice" + j) === undefined) {
+      el.classList.add("off");
+    } else {
+      var cookie = Cookies.get("notice" + j);
+      el.classList.add(cookie);
+    }
+  }
 }
