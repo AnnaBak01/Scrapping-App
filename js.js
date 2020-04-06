@@ -46,7 +46,7 @@ function renderPage(subjects) {
         $(".toast").toast("show");
         $("#" + notice).removeClass("on");
         $("#" + notice).addClass("off");
-        checkCookie(notice, "on");
+        setCookie(notice, "off");
       } else if ($("#" + notice).hasClass("off")) {
         $("strong").html("Dodano znacznik pracy domowej!");
         $(".toast-body").html(
@@ -55,7 +55,7 @@ function renderPage(subjects) {
         $(".toast").toast("show");
         $("#" + notice).removeClass("off");
         $("#" + notice).addClass("on");
-        checkCookie(notice, "off");
+        setCookie(notice, "on");
       }
     });
   });
@@ -79,21 +79,8 @@ xhttp.onreadystatechange = function () {
 xhttp.open("GET", "http://localhost/CrapApp/php.php/all/", true);
 xhttp.send();
 
-function setCookie(cname, cvalue, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
-  var expires = "expires=" + d.toGMTString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function checkCookie(id, klasa) {
-  if (id == null) {
-    checkTag();
-  } else {
-    var subject = id;
-    setCookie(subject, klasa, 30);
-    
-  }
+function setCookie(notice, vclass) {
+  Cookies.set(notice, vclass, { expires: 30 });
 }
 
 function loadCookies() {

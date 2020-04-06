@@ -88,3 +88,5 @@ xhttp.onreadystatechange = function () {
 };
 xhttp.open("GET", "http://localhost/CrapApp/php.php/all/" + subjectId, true);
 xhttp.send();
+
+
