@@ -11,9 +11,13 @@ function renderPage(subjects) {
                     <p class="title">
                          <div class="row">
                               <div class="col-10" id="${element[0]}">
-                                  <span class="text-muted">Ostatnia zmiana: ${element[5].split(",")[0]}</span>
+                                  <span class="text-muted">Ostatnia zmiana: ${
+                                    element[5].split(",")[0]
+                                  }</span>
                                   <h4>${element[4]}</h4>
-                                  <span class="text-muted"><small>${element[1]}</small></span>
+                                  <span class="text-muted"><small>${
+                                    element[1]
+                                  }</small></span>
                               </div>
                          <div class="col-2 mt-1">
                     <div class="notice" id="notice${element[0]}"></div>
@@ -50,7 +54,7 @@ function renderPage(subjects) {
       } else if ($("#" + notice).hasClass("off")) {
         $("strong").html("Dodano znacznik pracy domowej!");
         $(".toast-body").html(
-          "Znakcznik będzie tutaj dopóki nie odrobisz lekcji z tego przedmiotu."
+          "Znacznik będzie tutaj dopóki nie odrobisz lekcji z tego przedmiotu."
         );
         $(".toast").toast("show");
         $("#" + notice).removeClass("off");
@@ -83,7 +87,7 @@ function setCookie(notice, vclass) {
 }
 
 function loadCookies() {
-  for (let j = 1; j < 14; j++) {
+  for (let j = 1; j < 18; j++) {
     const el = document.getElementById("notice" + j);
     const a = Cookies.get("notice" + j);
     if (Cookies.get("notice" + j) === undefined) {

@@ -63,7 +63,6 @@ def create_tables(db: sqlite3.Connection):
     # scrap_page()
 
 
-
 def scrap_page():
     con = get_db()
     con.row_factory = dict_factory
@@ -81,14 +80,16 @@ def scrap_page():
 
     is_updated = False
     for subject in myresult:
-        homework = BeautifulSoup(requests.get(subject['link']).text, 'html.parser').find('div', class_="entry-content")
+        homework = BeautifulSoup(requests.get(subject['link']).text, 'html.parser').find(
+            'div', class_="entry-content")
         if homework.text != subject['homework']:
             is_updated = True
             cur.execute('update reference set homework=?, homework_tags=?, homework_update_id=? where id=?',
                         (homework.text, str(homework), update_id, subject['id']))
 
     if is_updated == True:
-        cur.execute("insert into homework_update (date) values (?)", (datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),))
+        cur.execute("insert into homework_update (date) values (?)",
+                    (datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),))
 
     con.commit()
     con.close()
@@ -98,22 +99,27 @@ def insert_links_once():
     subjects = [
         ('Zbigniew Switek', 'http://zsstaszow.pl/switek-zbigniew/', 'Język polski'),
         ('Krzysztof Janik', 'http://zsstaszow.pl/janik-krzysztof/', 'Język angielski'),
-        ('Agnieszka Misterkiewicz', 'http://zsstaszow.pl/english-class-3-ti/', 'Język angielski'),
-        ('Anna Mikus', 'http://zsstaszow.pl/kl-iiiti-jezyk-angielski-zawodowy/', 'Angielski zawodowy'),
+        ('Agnieszka Misterkiewicz',
+         'http://zsstaszow.pl/english-class-3-ti/', 'Język angielski'),
+        ('Anna Mikus', 'http://zsstaszow.pl/kl-iiiti-jezyk-angielski-zawodowy/',
+         'Angielski zawodowy'),
         ('Wojciech Żmuda', 'http://zsstaszow.pl/zmuda-wojciech/', 'Język niemiecki'),
         ('Grażyna Sikora', 'http://zsstaszow.pl/sikora-grazyna/', 'Język Rosyjski'),
-        ('Małgorzata Kochanowska', 'http://zsstaszow.pl/klasa-iii-ti-matematyka/', 'Matematyka'),
+        ('Małgorzata Kochanowska',
+         'http://zsstaszow.pl/klasa-iii-ti-matematyka/', 'Matematyka'),
         ('Andrzej Fąfara', 'http://zsstaszow.pl/fizyka-3-ti/', 'Fizyka'),
-        ('Dorota Kędziora', 'http://zsstaszow.pl/http://zsstaszow.pl/kedziora-dorota/', 'Geografia'),
+        ('Dorota Kędziora', 'http://zsstaszow.pl/kedziora-dorota/', 'Geografia'),
         ('Janusz Kosowicz', 'http://zsstaszow.pl/kosowicz-janusz/', 'PP'),
         ('Jan Krupa', 'http://zsstaszow.pl/historia-klasa-3ts-3-tom-3-ti/', 'HIS'),
         ('Andrzej Stawiński', 'http://zsstaszow.pl/klasa-3-ti/', 'Projektowanie baz'),
-        ('Robert Kochanowski', 'http://zsstaszow.pl/klasa-iii-ti-informa/', 'Tworzenie aplikacji'),
+        ('Robert Kochanowski', 'http://zsstaszow.pl/klasa-iii-ti-informa/',
+         'Tworzenie aplikacji'),
         ('Tomasz Dygulski', 'http://zsstaszow.pl/tworzenie-aplikacji-i-witryny-internetowe-kl-3ti/',
          'Witryny internetowe'),
         ('Leszek Tarka', 'http://zsstaszow.pl/tarka-leszek/', 'WF gr. 2'),
         ('Krzysztof Drozd', 'http://zsstaszow.pl/wychowanie-fizyczne-iii-ti-1gr/', 'WF gr. 1'),
-        ('Karolina Napierała', 'http://zsstaszow.pl/klasy-iiitb-iiiti-iiitom-wychowanie-fizyczne/', 'WF - ja'),
+        ('Karolina Napierała',
+         'http://zsstaszow.pl/klasy-iiitb-iiiti-iiitom-wychowanie-fizyczne/', 'WF - ja'),
         ('Sylwester Gaweł', 'http://zsstaszow.pl/gawel-sylwester/', 'Religia')]
 
     db = get_db()
