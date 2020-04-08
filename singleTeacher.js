@@ -2,11 +2,20 @@ import { html, render } from "https://unpkg.com/lit-html?module";
 
 function renderPage(subjects) {
   const element = subjects[0];
+  const template = document.createElement("div");
+  template.innerHTML = element.homeworkTags;
   const itemsContainer = html`
     <div class="container p-0 text-dark" style="margin-top: 7em;">
       <div class="row">
-        <div class="col-md-3">
-          <div style="position:fixed; top:25;">
+        <div class="col-md-8 pl-5">
+          <span class="text-muted">${element.name}</span>
+          <h1>${element.type}</h1>
+          <div class="mt-5" id="homeworkTags">
+            ${template.childNodes}
+          </div>
+        </div>
+        <div class="col-md-3 mt-sm-5 mt-xs-5">
+          <div style="top:25;">
             <h5 class="ml-2">
               Popularne:
             </h5>
@@ -66,11 +75,6 @@ function renderPage(subjects) {
             </ul>
           </div>
         </div>
-        <div class="col-md-7 pl-5">
-          <span class="text-muted">${element.name}</span>
-          <h1>${element.type}</h1>
-          <div class="mt-5" id="homeworkTags">${element.homeworkTags}</div>
-        </div>
       </div>
     </div>
   `;
@@ -88,5 +92,3 @@ xhttp.onreadystatechange = function () {
 };
 xhttp.open("GET", "http://localhost/CrapApp/php.php/all/" + subjectId, true);
 xhttp.send();
-
-

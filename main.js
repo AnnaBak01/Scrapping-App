@@ -10,7 +10,7 @@ function renderPage(subjects) {
                <div class="card-body">
                     <p class="title">
                          <div class="row">
-                              <div class="col-10" id="${element.id}">
+                              <div class="col-10 name" id="${element.id}">
                                    <span class="text-muted date">${element.date}</span>
                                    <h4>${element.type}</h4>
                                    <span class="text-muted"><small>${element.name}</small></span>

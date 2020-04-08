@@ -24,7 +24,6 @@ myresult = mycursor.fetchall()
 
 for subject in myresult:
     print("link = ", subject[2], subject[1])
-    # try:
     pagetoparse = requests.get(subject[2])
     soup = BeautifulSoup(pagetoparse.text, 'html.parser')
     homework = soup.find('div', class_="entry-content")
@@ -32,15 +31,20 @@ for subject in myresult:
     sql = 'update reference set homework=%s, homeworkTags=%s where id=%s'
     val = (homework.text, str(homework), subject[0])
     mycursor.execute(sql, val)
-    mydb.commit()
-    # except:
-    #     pass
-    # break
 
 
 print(mycursor.rowcount, "record inserted.")
 
+mycursor.execute("SELECT name, homeworkTags FROM reference")
 
-# mydb.commit()
+myresult = mycursor.fetchall()
+
+for x in myresult:
+    print(x)
+
+
+mydb.commit()
+mycursor.close()
+mydb.close()
 
 # print(mycursor.rowcount, "record inserted.")
