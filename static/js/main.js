@@ -6,21 +6,21 @@ function renderPage(subjects) {
     const element = subjects[i];
     itemsList.push(html`
       <div class="col-lg-4 my-4">
-          <div class="card" id="card${element.id}">
+          <div class="card" id="card${element[0]}">
                <div class="card-body">
                     <p class="title">
                          <div class="row">
-                              <div class="col-10" id="${element.id}">
-                                   <span class="text-muted date">${element.date}</span>
-                                   <h4>${element.type}</h4>
-                                   <span class="text-muted"><small>${element.name}</small></span>
+                              <div class="col-10" id="${element[0]}">
+                                  <span class="text-muted">Ostatnia zmiana: ${element[5].split(",")[0]}</span>
+                                  <h4>${element[4]}</h4>
+                                  <span class="text-muted"><small>${element[1]}</small></span>
                               </div>
                          <div class="col-2 mt-1">
-                    <div class="notice" id="notice${element.id}"></div>
+                    <div class="notice" id="notice${element[0]}"></div>
                </div>
           </div>
      </p>
-     <p class="card-text" id="text">${element.homework}</p>
+     <p class="card-text" id="text">${element[3]}</p>
      </div>
      </div>
      </div>
@@ -62,8 +62,7 @@ function renderPage(subjects) {
 
   $(document).ready(function () {
     $(".col-10").click(function () {
-      localStorage.setItem("subjectId", this.id);
-      location.href = "http://localhost/crapapp/singleteacher.html";
+      location.href = "/single/" + this.id;
     });
   });
 
@@ -76,7 +75,7 @@ xhttp.onreadystatechange = function () {
     loadCookies();
   }
 };
-xhttp.open("GET", "http://localhost/CrapApp/php.php/all/", true);
+xhttp.open("GET", "api/all", true);
 xhttp.send();
 
 function setCookie(notice, vclass) {

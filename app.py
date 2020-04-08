@@ -6,6 +6,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 
 from flask import Flask, Response, render_template, g, send_from_directory
+
 app = Flask(__name__, static_url_path='')
 
 
@@ -46,7 +47,7 @@ def create_tables(db: sqlite3.Connection):
     CREATE TABLE IF NOT EXISTS `homework_update` (
         id INTEGER PRIMARY KEY,
         date TEXT
-    )""" )
+    )""")
     cur.execute("""
     CREATE TABLE IF NOT EXISTS `reference` (
         id INTEGER PRIMARY KEY,
@@ -57,6 +58,11 @@ def create_tables(db: sqlite3.Connection):
         homework_update_id INTEGER,
         homework_tags TEXT 
     )""")
+    # TODO if empty
+    # execute insert_links_once()
+    # scrap_page()
+
+
 
 def scrap_page():
     con = get_db()
@@ -78,7 +84,8 @@ def scrap_page():
         homework = BeautifulSoup(requests.get(subject['link']).text, 'html.parser').find('div', class_="entry-content")
         if homework.text != subject['homework']:
             is_updated = True
-            cur.execute('update reference set homework=?, homework_tags=?, homework_update_id=? where id=?', (homework.text, str(homework), update_id, subject['id']))
+            cur.execute('update reference set homework=?, homework_tags=?, homework_update_id=? where id=?',
+                        (homework.text, str(homework), update_id, subject['id']))
 
     if is_updated == True:
         cur.execute("insert into homework_update (date) values (?)", (datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),))
@@ -86,36 +93,35 @@ def scrap_page():
     con.commit()
     con.close()
 
-def insert_links_once():
-    # TODO
-    subjects = [
-    ('Zbigniew Switek', 'http://zsstaszow.pl/switek-zbigniew/', 'Język polski'),
-    ('Krzysztof Janik', 'http://zsstaszow.pl/janik-krzysztof/', 'Język angielski'),
-    ('Agnieszka Misterkiewicz','http://zsstaszow.pl/english-class-3-ti/', 'Język angielski'),
-    ('Anna Mikus','http://zsstaszow.pl/kl-iiiti-jezyk-angielski-zawodowy/', 'Angielski zawodowy'),
-    ('Wojciech Żmuda','http://zsstaszow.pl/zmuda-wojciech/', 'Język niemiecki'),
-    ('Grażyna Sikora','http://zsstaszow.pl/sikora-grazyna/', 'Język Rosyjski'),
-    ('Małgorzata Kochanowska','http://zsstaszow.pl/klasa-iii-ti-matematyka/', 'Matematyka'),
-    ('Andrzej Fąfara','http://zsstaszow.pl/fizyka-3-ti/', 'Fizyka'),
-    ('Dorota Kędziora','http://zsstaszow.pl/http://zsstaszow.pl/kedziora-dorota/', 'Geografia'),
-    ('Janusz Kosowicz','http://zsstaszow.pl/kosowicz-janusz/', 'PP'),
-    ('Jan Krupa','http://zsstaszow.pl/historia-klasa-3ts-3-tom-3-ti/', 'HIS'),
-    ('Andrzej Stawiński','http://zsstaszow.pl/klasa-3-ti/', 'Projektowanie baz'),
-    ('Robert Kochanowski','http://zsstaszow.pl/klasa-iii-ti-informa/', 'Tworzenie aplikacji'),
-    ('Tomasz Dygulski','http://zsstaszow.pl/tworzenie-aplikacji-i-witryny-internetowe-kl-3ti/', 'Witryny internetowe'),
-    ('Leszek Tarka','http://zsstaszow.pl/tarka-leszek/', 'WF gr. 2'),
-    ('Krzysztof Drozd','http://zsstaszow.pl/wychowanie-fizyczne-iii-ti-1gr/', 'WF gr. 1'),
-    ('Karolina Napierała','http://zsstaszow.pl/klasy-iiitb-iiiti-iiitom-wychowanie-fizyczne/', 'WF - ja'),
-    ('Sylwester Gaweł','http://zsstaszow.pl/gawel-sylwester/', 'Religia')]
 
+def insert_links_once():
+    subjects = [
+        ('Zbigniew Switek', 'http://zsstaszow.pl/switek-zbigniew/', 'Język polski'),
+        ('Krzysztof Janik', 'http://zsstaszow.pl/janik-krzysztof/', 'Język angielski'),
+        ('Agnieszka Misterkiewicz', 'http://zsstaszow.pl/english-class-3-ti/', 'Język angielski'),
+        ('Anna Mikus', 'http://zsstaszow.pl/kl-iiiti-jezyk-angielski-zawodowy/', 'Angielski zawodowy'),
+        ('Wojciech Żmuda', 'http://zsstaszow.pl/zmuda-wojciech/', 'Język niemiecki'),
+        ('Grażyna Sikora', 'http://zsstaszow.pl/sikora-grazyna/', 'Język Rosyjski'),
+        ('Małgorzata Kochanowska', 'http://zsstaszow.pl/klasa-iii-ti-matematyka/', 'Matematyka'),
+        ('Andrzej Fąfara', 'http://zsstaszow.pl/fizyka-3-ti/', 'Fizyka'),
+        ('Dorota Kędziora', 'http://zsstaszow.pl/http://zsstaszow.pl/kedziora-dorota/', 'Geografia'),
+        ('Janusz Kosowicz', 'http://zsstaszow.pl/kosowicz-janusz/', 'PP'),
+        ('Jan Krupa', 'http://zsstaszow.pl/historia-klasa-3ts-3-tom-3-ti/', 'HIS'),
+        ('Andrzej Stawiński', 'http://zsstaszow.pl/klasa-3-ti/', 'Projektowanie baz'),
+        ('Robert Kochanowski', 'http://zsstaszow.pl/klasa-iii-ti-informa/', 'Tworzenie aplikacji'),
+        ('Tomasz Dygulski', 'http://zsstaszow.pl/tworzenie-aplikacji-i-witryny-internetowe-kl-3ti/',
+         'Witryny internetowe'),
+        ('Leszek Tarka', 'http://zsstaszow.pl/tarka-leszek/', 'WF gr. 2'),
+        ('Krzysztof Drozd', 'http://zsstaszow.pl/wychowanie-fizyczne-iii-ti-1gr/', 'WF gr. 1'),
+        ('Karolina Napierała', 'http://zsstaszow.pl/klasy-iiitb-iiiti-iiitom-wychowanie-fizyczne/', 'WF - ja'),
+        ('Sylwester Gaweł', 'http://zsstaszow.pl/gawel-sylwester/', 'Religia')]
 
     db = get_db()
     for subject in subjects:
         cur = db.cursor()
         cur.execute("""insert into
         reference (name, link, homework, type, homework_update_id, homework_tags) 
-        values (?, ?, '', ?,'','')""" , (subject[0], subject[1], subject[2]))
-        break
+        values (?, ?, '', ?,'','')""", (subject[0], subject[1], subject[2]))
     db.commit()
 
 
@@ -149,8 +155,6 @@ def single(id: int):
 
 @app.route('/scrap')
 def scrap():
-    # TODO
-    # insert_links_once()
     scrap_page()
     return "Ok"
 
@@ -165,4 +169,4 @@ def main():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=80)
