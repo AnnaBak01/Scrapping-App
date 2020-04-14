@@ -108,7 +108,6 @@ def insert_links_once():
         ('Małgorzata Kochanowska',
          'http://zsstaszow.pl/klasa-iii-ti-matematyka/', 'Matematyka'),
         ('Andrzej Fąfara', 'http://zsstaszow.pl/fizyka-3-ti/', 'Fizyka'),
-        ('Dorota Kędziora', 'http://zsstaszow.pl/kedziora-dorota/', 'Geografia'),
         ('Janusz Kosowicz', 'http://zsstaszow.pl/kosowicz-janusz/', 'PP'),
         ('Jan Krupa', 'http://zsstaszow.pl/historia-klasa-3ts-3-tom-3-ti/', 'HIS'),
         ('Andrzej Stawiński', 'http://zsstaszow.pl/klasa-3-ti/', 'Projektowanie baz'),
