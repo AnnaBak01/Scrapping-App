@@ -108,6 +108,7 @@ def insert_links_once():
         ('Małgorzata Kochanowska',
          'http://zsstaszow.pl/klasa-iii-ti-matematyka/', 'Matematyka'),
         ('Andrzej Fąfara', 'http://zsstaszow.pl/fizyka-3-ti/', 'Fizyka'),
+        ('Dorota Kędziora', 'http://zsstaszow.pl/kedziora-dorota/', 'Geografia'),
         ('Janusz Kosowicz', 'http://zsstaszow.pl/kosowicz-janusz/', 'PP'),
         ('Jan Krupa', 'http://zsstaszow.pl/historia-klasa-3ts-3-tom-3-ti/', 'HIS'),
         ('Andrzej Stawiński', 'http://zsstaszow.pl/klasa-3-ti/', 'Projektowanie baz'),
@@ -144,7 +145,7 @@ where r.homework_update_id = h.id
 @app.route('/api/<id>')
 def get_one_teacher(id: int):
     cur = get_db().cursor()
-    cur.execute("SELECT * FROM reference where id=?", (id))
+    cur.execute("SELECT * FROM reference where id=?", (id,))
     return get_gzipped_response(cur.fetchall())
 
 
@@ -174,4 +175,4 @@ def main():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=80)
+    app.run(debug=True)
