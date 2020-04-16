@@ -16,12 +16,12 @@ from flask import Flask, Response, render_template, g, send_from_directory
 app = Flask(__name__, static_url_path='')
 
 # HEROKU
-# DATABASE_URL = os.environ['DATABASE_URL']
-# SSL_MODE = 'require'
+DATABASE_URL = os.environ['DATABASE_URL']
+SSL_MODE = 'require'
 
 # LOCAL
-DATABASE_URL = "127.0.0.1"
-SSL_MODE = None
+# DATABASE_URL = "127.0.0.1"
+# SSL_MODE = None
 
 
 def get_gzipped_response(data):
@@ -51,11 +51,11 @@ def get_db() -> sqlite3.Connection:
     db = getattr(g, '_database', None)
     if db is None:
         # LOCAL
-        db = g._database = psycopg2.connect(host=DATABASE_URL, sslmode=SSL_MODE, database='planwat', user='postgres',
-                                            password='toor')
+        # db = g._database = psycopg2.connect(host=DATABASE_URL, sslmode=SSL_MODE, database='planwat', user='postgres',
+        #                                     password='toor')
 
         # HEROKU
-        # db = g._database = psycopg2.connect(DATABASE_URL, sslmode='require')
+        db = g._database = psycopg2.connect(DATABASE_URL, sslmode='require')
         create_tables(db)
     return db
 
@@ -111,9 +111,8 @@ def scrap_page():
             'div', class_="entry-content")
         if homework.text != subject['homework']:
             is_updated = True
-            # TODO
-            # send_notification("Nowa praca domowa",
-            #                   "Przedmiot '" + subject['type'] + "' został zaktualizowany")
+            send_notification("Nowa praca domowa",
+                              "Przedmiot '" + subject['type'] + "' został zaktualizowany")
             cur.execute('update reference set homework=%s, homework_tags=%s, homework_update_id=%s where id=%s',
                         (homework.text, str(homework), update_id, subject['id']))
 
