@@ -1,3 +1,7 @@
+from __future__ import print_function
+import datetime
+from firebase_admin import messaging
+
 import json
 import gzip
 import sqlite3
@@ -162,6 +166,41 @@ def single(id: int):
 @app.route('/scrap')
 def scrap():
     scrap_page()
+    """
+    type : 'POST',
+            url : "https://fcm.googleapis.com/fcm/send",
+            headers : {
+                Authorization : "key=" + my_key
+            },
+            contentType : 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({ 
+                "to" : "/topics/all",
+                "notification": {
+                    "title": "title",
+                    "body": "mes"
+                    }
+                }),
+            success : function(response) {
+                console.log(response);
+            },
+            error : function(xhr, status, error) {
+                console.log(xhr.error);                   
+            }
+        });
+    """
+    x = requests.post("https://fcm.googleapis.com/fcm/send",
+                      data={
+                          "to": "/topics/all",
+                          "notification": {
+                              "title": "nic1",
+                              "body": "nic2"
+                          }
+                      },
+                      headers={
+                          "Authorization": "key="+"AAAAh_ImxPE:APA91bFHHx7t3lAxnq4sxIUfxQP6v1FlO7EATk9QD_4hcTIj8BZ1fKL1mp3uXtgeiMrIJ_m2bDNcvP4Xm8BN_Vdt-lk42nCLMD7fhD4yGnQj5LGtC9TYxQoJjGi_gGjJnL2gxOfNeweY"
+                      })
+    print(x.content)
     return "Ok"
 
 
