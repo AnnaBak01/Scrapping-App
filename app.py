@@ -1,24 +1,27 @@
-from __future__ import print_function
 import datetime
-from firebase_admin import messaging
-
 import json
 import gzip
 import sqlite3
 import requests
+import os
+import psycopg2
+from psycopg2.extras import DictCursor
+
 from datetime import datetime
 from bs4 import BeautifulSoup
 
+from apscheduler.schedulers.blocking import BlockingScheduler
 from flask import Flask, Response, render_template, g, send_from_directory
 
 app = Flask(__name__, static_url_path='')
 
+# HEROKU
+# DATABASE_URL = os.environ['DATABASE_URL']
+# SSL_MODE = 'require'
 
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
+# LOCAL
+DATABASE_URL = "127.0.0.1"
+SSL_MODE = None
 
 
 def get_gzipped_response(data):
@@ -30,10 +33,29 @@ def get_gzipped_response(data):
     return response
 
 
+def send_notification(title: str, body: str):
+    x = requests.post("https://fcm.googleapis.com/fcm/send", json={
+        "to": "/topics/all",
+        "notification": {
+            "title": title,
+            "body": body
+        }
+    }, headers={
+        'Content-type': 'application/json',
+        "Authorization": "key=" + "AAAAh_ImxPE:APA91bFHHx7t3lAxnq4sxIUfxQP6v1FlO7EATk9QD_4hcTIj8BZ1fKL1mp3uXtgeiMrIJ_m2bDNcvP4Xm8BN_Vdt-lk42nCLMD7fhD4yGnQj5LGtC9TYxQoJjGi_gGjJnL2gxOfNeweY"
+    })
+    return x.content
+
+
 def get_db() -> sqlite3.Connection:
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect('data.db')
+        # LOCAL
+        db = g._database = psycopg2.connect(host=DATABASE_URL, sslmode=SSL_MODE, database='planwat', user='postgres',
+                                            password='toor')
+
+        # HEROKU
+        # db = g._database = psycopg2.connect(DATABASE_URL, sslmode='require')
         create_tables(db)
     return db
 
@@ -45,16 +67,16 @@ def close_connection(exception):
         db.close()
 
 
-def create_tables(db: sqlite3.Connection):
+def create_tables(db):
     cur = db.cursor()
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS `homework_update` (
-        id INTEGER PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS homework_update (
+        id SERIAL PRIMARY KEY,
         date TEXT
     )""")
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS `reference` (
-        id INTEGER PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS reference (
+        id SERIAL PRIMARY KEY,
         name TEXT,
         link TEXT,
         homework TEXT,
@@ -62,15 +84,12 @@ def create_tables(db: sqlite3.Connection):
         homework_update_id INTEGER,
         homework_tags TEXT 
     )""")
-    # TODO if empty
-    # execute insert_links_once()
-    # scrap_page()
+    db.commit()
 
 
 def scrap_page():
     con = get_db()
-    con.row_factory = dict_factory
-    cur = con.cursor()
+    cur = con.cursor(cursor_factory=DictCursor)
 
     cur.execute("select * from homework_update order by id desc limit 1")
     last_update_id = cur.fetchone()
@@ -81,6 +100,10 @@ def scrap_page():
 
     cur.execute("select * from reference")
     myresult = cur.fetchall()
+    if not myresult:
+        addThisLinks1234()
+        cur.execute("select * from reference")
+        myresult = cur.fetchall()
 
     is_updated = False
     for subject in myresult:
@@ -88,11 +111,14 @@ def scrap_page():
             'div', class_="entry-content")
         if homework.text != subject['homework']:
             is_updated = True
-            cur.execute('update reference set homework=?, homework_tags=?, homework_update_id=? where id=?',
+            # TODO
+            # send_notification("Nowa praca domowa",
+            #                   "Przedmiot '" + subject['type'] + "' został zaktualizowany")
+            cur.execute('update reference set homework=%s, homework_tags=%s, homework_update_id=%s where id=%s',
                         (homework.text, str(homework), update_id, subject['id']))
 
     if is_updated == True:
-        cur.execute("insert into homework_update (date) values (?)",
+        cur.execute("insert into homework_update (date) values (%s)",
                     (datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),))
 
     con.commit()
@@ -130,8 +156,8 @@ def insert_links_once():
     for subject in subjects:
         cur = db.cursor()
         cur.execute("""insert into
-        reference (name, link, homework, type, homework_update_id, homework_tags) 
-        values (?, ?, '', ?,'','')""", (subject[0], subject[1], subject[2]))
+        reference (name, link, type) 
+        values (%s, %s, %s)""", (subject[0], subject[1], subject[2]))
     db.commit()
 
 
@@ -149,7 +175,7 @@ where r.homework_update_id = h.id
 @app.route('/api/<id>')
 def get_one_teacher(id: int):
     cur = get_db().cursor()
-    cur.execute("SELECT * FROM reference where id=?", (id,))
+    cur.execute("SELECT * FROM reference where id=%s", (id,))
     return get_gzipped_response(cur.fetchall())
 
 
@@ -166,42 +192,13 @@ def single(id: int):
 @app.route('/scrap')
 def scrap():
     scrap_page()
-    """
-    type : 'POST',
-            url : "https://fcm.googleapis.com/fcm/send",
-            headers : {
-                Authorization : "key=" + my_key
-            },
-            contentType : 'application/json',
-            dataType: 'json',
-            data: JSON.stringify({ 
-                "to" : "/topics/all",
-                "notification": {
-                    "title": "title",
-                    "body": "mes"
-                    }
-                }),
-            success : function(response) {
-                console.log(response);
-            },
-            error : function(xhr, status, error) {
-                console.log(xhr.error);                   
-            }
-        });
-    """
-    x = requests.post("https://fcm.googleapis.com/fcm/send",
-                      data={
-                          "to": "/topics/all",
-                          "notification": {
-                              "title": "nic1",
-                              "body": "nic2"
-                          }
-                      },
-                      headers={
-                          "Authorization": "key="+"AAAAh_ImxPE:APA91bFHHx7t3lAxnq4sxIUfxQP6v1FlO7EATk9QD_4hcTIj8BZ1fKL1mp3uXtgeiMrIJ_m2bDNcvP4Xm8BN_Vdt-lk42nCLMD7fhD4yGnQj5LGtC9TYxQoJjGi_gGjJnL2gxOfNeweY"
-                      })
-    print(x.content)
-    return "Ok"
+    return "Ok."
+
+
+@app.route('/addThisLinks1234')
+def addThisLinks1234():
+    insert_links_once()
+    return "Ok XD"
 
 
 @app.route('/')
@@ -214,4 +211,7 @@ def main():
 
 
 if __name__ == '__main__':
+    scheduler = BlockingScheduler()
+    scheduler.add_job(scrap_page, 'interval', hours=1)
+    scheduler.start()
     app.run(debug=True)

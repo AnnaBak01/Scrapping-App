@@ -87,7 +87,7 @@ function setCookie(notice, vclass) {
 }
 
 function loadCookies() {
-  for (let j = 1; j < 18; j++) {
+  for (let j = 1; j < 19; j++) {
     const el = document.getElementById("notice" + j);
     const a = Cookies.get("notice" + j);
     if (Cookies.get("notice" + j) === undefined) {
