@@ -215,3 +215,4 @@ if __name__ == '__main__':
     scheduler.add_job(scrap_page, 'interval', hours=1)
     scheduler.start()
     app.run(debug=True)
+#
