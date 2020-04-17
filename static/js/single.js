@@ -5,9 +5,9 @@ function renderPage(subjects) {
   const template = document.createElement("div");
   template.innerHTML = element[6];
   const itemsContainer = html`
-    <div class="container p-0 text-dark" style="margin-top: 7em;">
+    <div class="container text-dark" style="margin-top: 3em;">
       <div class="row">
-        <div class="col-md-8 pl-5">
+        <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 pl-3">
           <span class="text-muted">${element[1]}</span>
           <h1>${element[4]}</h1>
           <div class="mt-5" id="homeworkTags">
