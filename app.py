@@ -116,9 +116,8 @@ def scrap_page():
             cur.execute('update reference set homework=%s, homework_tags=%s, homework_update_id=%s where id=%s',
                         (homework.text, str(homework), update_id, subject['id']))
 
-    if is_updated == True:
-        cur.execute("insert into homework_update (date) values (%s)",
-                    (datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),))
+    # if is_updated == True:
+    cur.execute("insert into homework_update (date) values (%s)", (datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),))
 
     con.commit()
     con.close()
