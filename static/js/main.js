@@ -5,19 +5,19 @@ function renderPage(subjects) {
   for (let i = 0; i < subjects.length; i++) {
     const element = subjects[i];
     itemsList.push(html`
-      <div class="col-lg-3 my-4">
+      <div class="col-lg-4 my-4">
           <div class="card" id="card${element[0]}">
                <div class="card-body">
                     <p class="title">
                          <div class="row">
                               <div class="col-10" id="${element[0]}">
-                                  <span class="text-muted" id="last-update">Ostatnia zmiana: ${
-      element[5].split(",")[0]
-      }</span>
+                                  <span class="text-muted">Ostatnia zmiana: ${
+                                    element[5].split(",")[0]
+                                  }</span>
                                   <h4>${element[4]}</h4>
                                   <span class="text-muted"><small>${
-      element[1]
-      }</small></span>
+                                    element[1]
+                                  }</small></span>
                               </div>
                          <div class="col-2 mt-1">
                     <div class="notice" id="notice${element[0]}"></div>
