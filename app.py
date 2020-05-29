@@ -205,6 +205,8 @@ def main():
     cur = get_db().cursor()
     cur.execute("select date from homework_update order by id desc limit 1")
     date = cur.fetchone()
+    if date is None:
+        date = ['']  # TODO
 
     return render_template('index.html', last_update=date[0])
 
