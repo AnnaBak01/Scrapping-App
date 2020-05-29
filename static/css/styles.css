@@ -83,20 +83,9 @@
           box-shadow: 0 10px 15px #0000001f;
 }
 
-#card1, #card5, #card9, #card4, #card13, #card17 {
+.card {
   border-top: 3px solid #33b5e5;
-}
-
-#card2, #card6, #card10, #card14, #card18 {
-  border-top: 3px solid #ff4444;
-}
-
-#card3, #card7, #card11, #card15, #card19 {
-  border-top: 3px solid #00C851;
-}
-
-#card4, #card8, #card12, #card16, #card20 {
-  border-top: 3px solid #ffbb33;
+  
 }
 
 .name {
@@ -111,5 +100,15 @@ img, iframe, a {
   max-width: 100%;
   height: auto;
   word-wrap: break-word;
+}
+
+#sub-name{
+  font-size: 1em;
+  display: block;
+  color: black;
+}
+
+#sub-name:hover{
+  text-decoration: none;
 }
 /*# sourceMappingURL=styles.css.map */

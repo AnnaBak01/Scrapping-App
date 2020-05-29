@@ -12,12 +12,12 @@ function renderPage(subjects) {
                          <div class="row">
                               <div class="col-10" id="${element[0]}">
                                   <span class="text-muted">Ostatnia zmiana: ${
-                                    element[5].split(",")[0]
-                                  }</span>
-                                  <h4>${element[4]}</h4>
+      element[5].split(",")[0]
+      }</span>
+                                  <h4><a id="sub-name">${element[4]}</a><h4>
                                   <span class="text-muted"><small>${
-                                    element[1]
-                                  }</small></span>
+      element[1]
+      }</small></span>
                               </div>
                          <div class="col-2 mt-1">
                     <div class="notice" id="notice${element[0]}"></div>
@@ -67,6 +67,7 @@ function renderPage(subjects) {
   $(document).ready(function () {
     $(".col-10").click(function () {
       location.href = "/single/" + this.id;
+      document.getElementById("sub-name").href = "https://crapapp-staszic.herokuapp.com/single/" + this.id;
     });
   });
 

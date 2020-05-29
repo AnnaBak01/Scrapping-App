@@ -1,4 +1,5 @@
-import datetime
+
+from datetime import datetime, timedelta
 import json
 import gzip
 import sqlite3
@@ -117,7 +118,7 @@ def scrap_page():
                         (homework.text, str(homework), update_id, subject['id']))
 
     # if is_updated == True:
-    cur.execute("insert into homework_update (date) values (%s)", (datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),))
+    cur.execute("insert into homework_update (date) values (%s)", ((datetime.now() + timedelta(hours=2)).strftime("%d.%m.%Y, %H:%M:%S"),))
 
     con.commit()
     con.close()
